@@ -29,7 +29,7 @@
 
 ## Восстановить узел
 
-Из каталога `selfhost` узла ([инструкция](https://github.com/gurov/knigopis-p2p/blob/master/selfhost/README.md)):
+Из каталога `selfhost` узла ([инструкция](https://github.com/knigopis/knigopis-p2p/blob/master/selfhost/README.md)):
 
 ```sh
 cat /путь/к/events/*/*.jsonl | docker compose exec -T relay /app/strfry import

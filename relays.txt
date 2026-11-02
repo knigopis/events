@@ -1,3 +1,3 @@
 # Узлы, с которых собирается снимок, по одному в строке. Список должен совпадать
-# с src/known-relays.json в коде сайта (https://github.com/gurov/knigopis-p2p).
+# с src/known-relays.json в коде сайта (https://github.com/knigopis/knigopis-p2p).
 wss://www.knigopis.com
