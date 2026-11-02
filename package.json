@@ -1,0 +1,12 @@
+{
+  "name": "knigopis-events",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "snapshot": "node snapshot.mjs",
+    "test": "node test.mjs"
+  },
+  "dependencies": {
+    "nostr-tools": "^2.25.4"
+  }
+}

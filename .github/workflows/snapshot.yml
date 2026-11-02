@@ -1,0 +1,53 @@
+# Снимок записей Книгописи два раза в день (см. README).
+name: snapshot
+
+on:
+  schedule:
+    # 03:17 и 15:17 UTC. Не ровно в начале часа: тогда у Actions очередь.
+    - cron: '17 3,15 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Принять снимок, даже если сработал предохранитель
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshot
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+
+      - name: Снимок
+        run: node snapshot.mjs
+        env:
+          FORCE: ${{ inputs.force && '1' || '' }}
+          MESSAGE_FILE: ${{ runner.temp }}/message
+
+      - name: Коммит
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -q -F "$RUNNER_TEMP/message"
+          elif [ $(( $(date +%s) - $(git log -1 --format=%ct) )) -gt $(( 50 * 86400 )) ]; then
+            # В открытом репозитории GitHub отключает расписание после 60 дней без активности.
+            git commit -q --allow-empty -m 'Снимок: без изменений'
+          else
+            echo 'Изменений нет'
+            exit 0
+          fi
+          git push
